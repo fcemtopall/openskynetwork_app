@@ -1,96 +1,44 @@
 package com.fcemtopall.openskynetwork.presentation.screen
 
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import com.fcemtopall.openskynetwork.data.common.Resource
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
+import com.fcemtopall.openskynetwork.R
 import com.fcemtopall.openskynetwork.databinding.ActivityMainBinding
-import com.fcemtopall.openskynetwork.domain.entity.States
-import com.fcemtopall.openskynetwork.utils.StringUtils
-import com.yandex.mapkit.MapKitFactory
-import com.yandex.mapkit.geometry.Point
-import com.yandex.mapkit.map.CameraPosition
-import com.yandex.mapkit.mapview.MapView
-import dagger.hilt.android.AndroidEntryPoint
+import com.fcemtopall.openskynetwork.presentation.screen.viewmodel.MapViewModel
 
-@AndroidEntryPoint
+
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-    private lateinit var mapView: MapView
-    private val viewModel: MapViewModel by viewModels()
+    private lateinit var navController: NavController
+    private lateinit var aircraftViewModel: MapViewModel
+    private lateinit var _binding : ActivityMainBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
 
-        yandexMapInitialize()
+        setContentView(R.layout.activity_main)
+        navController = Navigation.findNavController(this, R.id.fragment)
 
-        getAllPlaneStates()
+        aircraftViewModel = ViewModelProvider(this)[MapViewModel::class.java]
+        aircraftViewModel.getAllAircraftStates()
 
-
-    }
-
-
-    init {
-        binding.maps.map.move(
-            CameraPosition(Point(0.0, 0.0), 4.0f, 0.0f, 0.0f)
-        )
-        mapView = binding.maps
-        mapView.map.isRotateGesturesEnabled = false
-    }
-
-
-    private fun getAllPlaneStates() {
-        viewModel.getAllAircraftStates().observe(this) { response ->
-            when (response.status) {
-                Resource.Status.LOADING -> binding.loadingBar.playAnimation()
-                Resource.Status.SUCCESS -> {
-                    viewModel.aircraftList = response.data?.states
-                    showAircraftOnMap(viewModel.aircraftList, mapView)
-
-                }
-                else -> {}
-            }
-        }
-    }
-
-    private fun showAircraftOnMap(aircraftList: List<States>?, mapView: MapView) {
-        val mapObjects = mapView.map.mapObjects.addCollection()
-
-        if (aircraftList != null) {
-            for (aircraft in aircraftList) {
-                val point = aircraft.latitude?.let {
-                    aircraft.longitude?.let { it1 ->
-                        Point(
-                            it.toFloat()
-                                .toDouble(), it1.toFloat().toDouble()
-                        )
-                    }
-                }
-                val placemark = point?.let { mapObjects.addPlacemark(it) }
-                if (placemark != null) {
-                    placemark.userData = aircraft
-                }
-
-            }
+        aircraftViewModel.getCountryList().let { countryList ->
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, countryList)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            _binding.countrySpinner.adapter = adapter
         }
 
+
     }
 
-
-    private fun yandexMapInitialize() {
-        MapKitFactory.setApiKey(StringUtils.getValueFromLocalProperties("yandex_api_key"))
-        MapKitFactory.initialize(this)
-    }
-
-    override fun onStop() {
-        mapView.onStop()
-        MapKitFactory.getInstance().onStop()
-        super.onStop()
+    override fun onSupportNavigateUp(): Boolean {
+        return NavigationUI.navigateUp(navController, null)
     }
 
 

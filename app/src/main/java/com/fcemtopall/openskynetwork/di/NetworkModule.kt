@@ -1,4 +1,4 @@
-package com.fcemtopall.openskynetwork.data
+package com.fcemtopall.openskynetwork.di
 
 import com.fcemtopall.openskynetwork.BuildConfig
 import com.fcemtopall.openskynetwork.data.api.ApiService

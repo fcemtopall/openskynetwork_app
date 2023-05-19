@@ -3,5 +3,17 @@
 
     <!-- Application Strings -->
     <string name="yandex_api_key" translatable="false">16f5af3d-2214-4c9f-8eac-78a8588da89c</string>
+    <string name="countdown_message">Aircraft statuses will be updated in %1$s seconds</string>
+    <string name="countdown_end_message">Aircraft statuses are now being refreshed</string>
+
+    <!-- Alert Dialog Strings -->
+    <string name="alert_dialog_error_text">Error</string>
+    <string name="alert_dialog_warning_text">Warning</string>
+    <string name="alert_dialog_info_text">Info</string>
+    <string name="alert_dialog_refresh_text">Refresh</string>
+
+    <!-- Error Message Strings -->
+    <string name="network_error_message">Network Error</string>
+    <string name="api_error_message">Api Error</string>
 
 </resources>
