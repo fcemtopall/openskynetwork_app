@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">OpenSky Network</string>
+
+    <!-- Application Strings -->
+    <string name="yandex_api_key" translatable="false">16f5af3d-2214-4c9f-8eac-78a8588da89c</string>
+
 </resources>
