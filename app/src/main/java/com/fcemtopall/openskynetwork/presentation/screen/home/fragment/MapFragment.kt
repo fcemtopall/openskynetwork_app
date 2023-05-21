@@ -1,4 +1,4 @@
-package com.fcemtopall.openskynetwork.presentation.screen.fragment
+package com.fcemtopall.openskynetwork.presentation.screen.home.fragment
 
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import com.fcemtopall.openskynetwork.R
 import com.fcemtopall.openskynetwork.data.common.Resource
 import com.fcemtopall.openskynetwork.databinding.FragmentMapBinding
@@ -30,7 +31,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MapFragment : Fragment() {
 
     private lateinit var _binding: FragmentMapBinding
-    private var mapView: MapView
+
+    private lateinit var mapView: MapView
     private val viewModel: MapViewModel by viewModels()
     private lateinit var countDownTimer: CountDownTimer
 
@@ -41,23 +43,34 @@ class MapFragment : Fragment() {
     ): View {
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         return _binding.root
+
+
+
+
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    init {
-        _binding.maps.map.move(
-            CameraPosition(Point(0.0, 0.0), 4.0f, 0.0f, 0.0f)
-        )
         mapView = _binding.maps
         mapView.map.isRotateGesturesEnabled = false
 
+        cameraPositionMove()
         getAllPlaneStates()
         yandexMapInitialize()
+        startCountDown()
 
         _binding.zoomIn.setOnClickListener { zoomIn() }
         _binding.zoomOut.setOnClickListener { zoomOut() }
+
     }
 
+
+    private fun cameraPositionMove(){
+        _binding.maps.map.move(
+            CameraPosition(Point(0.0, 0.0), 4.0f, 0.0f, 0.0f)
+        )
+    }
 
 
     private fun getAllPlaneStates() {
